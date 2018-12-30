@@ -1,0 +1,20 @@
+{
+  "name": "rest-server",
+  "version": "0.0.1",
+  "description": "rest-server",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server/server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rest",
+    "server"
+  ],
+  "author": "Santiago Arias",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
