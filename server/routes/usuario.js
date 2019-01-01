@@ -3,15 +3,11 @@ const bcrypt = require('bcryptjs')
 const _ = require('underscore')
 
 const Usuario = require('./../models/Usuario')
+const { verifyToken, verifyAdminUser } = require('../helpers/middlewares/auth')
 
 const app = express()
 
-app.get('/', (req, res) => {
-  res.json('root')
-})
-
-app.get('/usuario', (req, res) => {
-
+app.get('/usuario', verifyToken, async (req, res) => {
   let { init, limit } = req.query
 
   init = Number(init)
@@ -19,21 +15,20 @@ app.get('/usuario', (req, res) => {
 
   const condition = { estado: true }
 
-  return Usuario.find(condition)
-    .skip(init || 0)
-    .limit(limit || 5)
-    .then(usuarios => {
-
-      Usuario.count(condition).exec()
-        .then(usersAmount => res.json({ ok: true, usuarios, usersAmount }))
-        .catch(err => res.status(400).json({ ok: false, ...err }))
-
-    })
-    .catch(err => res.status(400).json({ ok: false, ...err }))
-
+  try {
+    const usuarios = await Usuario.find(condition)
+      .skip(init || 0)
+      .limit(limit || 5);
+    Usuario.countDocuments(condition).exec()
+      .then(usersAmount => res.json({ ok: true, usuarios, usersAmount }))
+      .catch(err => res.status(400).json({ ok: false, ...err }));
+  }
+  catch (err_1) {
+    return res.status(400).json({ ok: false, ...err_1 });
+  }
 })
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verifyToken, verifyAdminUser], (req, res) => {
   let { body: persona } = req
 
   let usuario = new Usuario({
@@ -61,8 +56,7 @@ app.post('/usuario', (req, res) => {
   })
 })
 
-app.put('/usuario/:id', (req, res) => {
-
+app.put('/usuario/:id', [verifyToken, verifyAdminUser], (req, res) => {
   let { body, params } = req
     , { id } = params
     , omits = ['password', 'google']
@@ -81,11 +75,10 @@ app.put('/usuario/:id', (req, res) => {
       ok: true,
       usuario: usuarioDB
     })
-
   })
 })
 
-app.delete('/usuario/:id', (req, res) => {
+app.delete('/usuario/:id', [verifyToken, verifyAdminUser], (req, res) => {
   let { id } = req.params
     , changeState = { estado: false }
 
