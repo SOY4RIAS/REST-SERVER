@@ -18,13 +18,14 @@ app.get('/usuario', verifyToken, async (req, res) => {
   try {
     const usuarios = await Usuario.find(condition)
       .skip(init || 0)
-      .limit(limit || 5);
+      .limit(limit || 5)
+
     Usuario.countDocuments(condition).exec()
       .then(usersAmount => res.json({ ok: true, usuarios, usersAmount }))
-      .catch(err => res.status(400).json({ ok: false, ...err }));
+      .catch(err => res.status(400).json({ ok: false, ...err }))
   }
   catch (err_1) {
-    return res.status(400).json({ ok: false, ...err_1 });
+    return res.status(400).json({ ok: false, ...err_1 })
   }
 })
 
