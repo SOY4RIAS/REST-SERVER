@@ -4,7 +4,7 @@
   "description": "rest-server",
   "main": "server/server.js",
   "scripts": {
-    "start": "node server/server",
+    "start": "pm2-runtime server/server.js",
     "open": "start chrome http://localhost:3000",
     "dev": "nodemon",
     "mode:pm2": "pm2 start server/server.js --watch",
@@ -24,6 +24,7 @@
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.4.1",
     "mongoose-unique-validator": "^2.0.2",
+    "pm2": "^3.2.4",
     "underscore": "^1.9.1"
   },
   "devDependencies": {}
