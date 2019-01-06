@@ -11,6 +11,8 @@ app.get('/categoria', async (req, res) => {
 
   try {
     const categorias = await Categoria.find({})
+      .sort('descripcion')
+      .populate('usuario', 'nombre email')
       .skip(init || 0)
       .limit(limit || 5)
 
@@ -37,7 +39,7 @@ app.post('/categoria', verifyToken, (req, res) => {
   let newCategory = new Categoria({ descripcion, usuario })
 
   newCategory.save()
-    .then(user => res.json({ ok: true, user }))
+    .then(category => res.json({ ok: true, category }))
     .catch(err => res.status(500).json({ ok: false, err }))
 })
 

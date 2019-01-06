@@ -8,7 +8,7 @@ const path = require('path')
 const app = express()
 const { PORT, urlDB } = process.env
 
-/**DB */
+/** DB */
 mongoose.connect(urlDB, { useCreateIndex: true, useNewUrlParser: true })
   .then(res => console.log('Base de datos Conectada'))
   .catch(err => console.log(err))
