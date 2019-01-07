@@ -30,6 +30,17 @@ app.get('/producto/:id', verifyToken, (req, res) => {
     .catch(err => res.status(500).json({ ok: false, err }))
 })
 
+app.get('/productos/buscar/:search', verifyToken, (req, res) => {
+  let { search } = req.params
+    , regex = new RegExp(search, 'i')
+
+  Producto.find({ nombre: regex })
+    .populate('categoria', 'nombre')
+    .populate('usuario', 'nombre')
+    .then(data => res.json({ ok: true, data }))
+    .catch(err => res.status(400).json({ ok: false, err }))
+})
+
 app.post('/producto', verifyToken, (req, res) => {
   const { _id: usuario } = req.user
 
@@ -41,16 +52,16 @@ app.post('/producto', verifyToken, (req, res) => {
 })
 
 app.put('/producto/:id', verifyToken, (req, res) => {
-  const { id } = req.params
+  const { id: _id } = req.params
 
-  Producto.findByIdAndUpdate(id, { ...req.body }, { new: true })
+  Producto.findOneAndUpdate({ _id }, { ...req.body }, { new: true })
     .then(product => res.json({ ok: true, product }))
     .catch(err => res.status(500).json({ ok: false, err }))
 })
 
 app.delete('/producto/:id', verifyToken, (req, res) => {
-  const { id } = req.params
-  Producto.findByIdAndRemove(id)
+  const { id: _id } = req.params
+  Producto.findOneAndDelete({ _id })
     .then(deleted => {
       const err = {
         message: 'no se encuentra el registro'
@@ -62,5 +73,7 @@ app.delete('/producto/:id', verifyToken, (req, res) => {
     })
     .catch(err => res.status(400).json({ ok: false, err }))
 })
+
+
 
 module.exports = app;
